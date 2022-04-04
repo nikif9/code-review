@@ -24,16 +24,16 @@ class ProjectController
     /**
      * @param Request $request
      * 
-     * @Route("/project/{id}", name="project", method="GET")
+     * @Route("/project/{id}", name="project", method="GET") // тип запроса надо писать так methods={"GET"} а не method="GET"
      */
-    public function projectAction(Request $request)
+    public function projectAction(Request $request)// не нужен request так как изначально можно было передать id таким образом projectAction(int $id)
     {
         try {
             $project = $this->storage->getProjectById($request->get('id'));
 
             return new Response($project->toJson());
         } catch (Model\NotFoundException $e) {
-            return new Response('Not found', 404);
+            return new Response('Not found', 404);// нужно возврошять ответ в виле json
         } catch (\Throwable $e) {
             return new Response('Something went wrong', 500);
         }
@@ -42,11 +42,11 @@ class ProjectController
     /**
      * @param Request $request
      *
-     * @Route("/project/{id}/tasks", name="project-tasks", method="GET")
+     * @Route("/project/{id}/tasks", name="project-tasks", method="GET")// тоже что и выше
      */
     public function projectTaskPagerAction(Request $request)
     {
-        $tasks = $this->storage->getTasksByProjectId(
+        $tasks = $this->storage->getTasksByProjectId(// в документации не написано что нужно в запросе отправлять limit и ofset  и нет обработки ошибок
             $request->get('id'),
             $request->get('limit'),
             $request->get('offset')
@@ -58,7 +58,7 @@ class ProjectController
     /**
      * @param Request $request
      *
-     * @Route("/project/{id}/tasks", name="project-create-task", method="PUT")
+     * @Route("/project/{id}/tasks", name="project-create-task", method="PUT")// тоже что и выше и в документации должен был post запрос а не put
      */
     public function projectCreateTaskAction(Request $request)
     {
@@ -68,7 +68,7 @@ class ProjectController
 		}
 		
 		return new JsonResponse(
-			$this->storage->createTask($_REQUEST, $project->getId())
+			$this->storage->createTask($_REQUEST, $project->getId()) //нет обработки ошибок
 		);
     }
 }
